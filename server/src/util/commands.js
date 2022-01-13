@@ -1,7 +1,7 @@
 const { exec } = require('child_process');
 
 // execute an input command into the terminal (successCB and errorCB is optional)
-export const util = {
+const util = {
   executeCommand: (cmd, successCB, errorCB) => {
     exec(cmd, (error, stdout, stderr) => {
       if (error) {
@@ -35,12 +35,12 @@ export const util = {
 
   // grabs first line (headers from CSV files)
   firstLine: (filename) => {
-    executeCommand(
+    util.executeCommand(
       `head -n1 ${filename}`,
       (firstLine) => {
         const headersArray = firstLine.split(',');
-        const fixedHeadersArray = lineBreakfix(headersArray);
-        console.log(fixedHeadersArray);
+        const fixedHeadersArray = util.lineBreakfix(headersArray);
+        console.log(`${filename} => ${fixedHeadersArray}`);
       },
       (error) => {
         console.log('error grabbing first line', error);
@@ -48,3 +48,8 @@ export const util = {
     );
   },
 };
+
+util.firstLine('../datasources/reviews.csv');
+util.firstLine('../datasources/characteristic_reviews.csv');
+util.firstLine('../datasources/characteristics.csv');
+util.firstLine('../datasources/reviews_photos.csv');
