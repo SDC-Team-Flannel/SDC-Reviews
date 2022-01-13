@@ -1,0 +1,20 @@
+{
+  "name": "sdc-reviews",
+  "version": "1.0.0",
+  "description": "Back-end project connecting front end (FEC) to a better API and better designed database. System Designs Capstone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SDC-Team-Flannel/SDC-Reviews.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SDC-Team-Flannel/SDC-Reviews/issues"
+  },
+  "homepage": "https://github.com/SDC-Team-Flannel/SDC-Reviews#readme"
+}
