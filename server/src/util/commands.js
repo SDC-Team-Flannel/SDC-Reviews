@@ -49,7 +49,6 @@ const util = {
   },
 };
 
-util.firstLine('../datasources/reviews.csv');
-util.firstLine('../datasources/characteristic_reviews.csv');
-util.firstLine('../datasources/characteristics.csv');
-util.firstLine('../datasources/reviews_photos.csv');
+module.exports = {
+  util,
+};
