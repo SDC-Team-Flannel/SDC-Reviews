@@ -1,20 +1,27 @@
 const route = {
   // route to query all non reported reviews
   reviewsGet: (req) => {
-    console.log(req);
+    console.log('this is in routes: get', req);
   },
   // route to query review metadata based on provided product_id
-
-  reviewsMetaGet: () => {},
+  reviewsMetaGet: (req) => {
+    console.log('this is in routes: Metadata', req);
+  },
 
   // route to add review to reviews data
-  reviewsMetaGet: () => {},
+  reviewsPost: (req) => {
+    console.log('this is in routes: Add', req);
+  },
 
   // route to update review as helpful
-  reviewsMetaGet: () => {},
+  markHelpful: (req) => {
+    console.log('this is in routes: helpful', req);
+  },
 
   // route to update review as reported (makes it no longer available in reviews get)
-  reviewsMetaGet: () => {},
+  reportReview: (req) => {
+    console.log('this is in routes: report', req);
+  },
 };
 
 module.exports = {
