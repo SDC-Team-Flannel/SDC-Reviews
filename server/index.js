@@ -23,7 +23,7 @@ app.post('/reviews', (req, res) => {
 });
 
 // TODO: turn url into req.review_id
-app.put('/helpful', (req, res) => {
+app.put('/reviews//helpful', (req, res) => {
   console.log(req.query);
   route.markHelpful(req.query);
   res.send('received post for helpful');
