@@ -47,6 +47,21 @@ const util = {
       }
     );
   },
+
+  // grabs last line of CSV file
+  lastLine: (filename) => {
+    util.executeCommand(
+      `tail -n1 ${filename}`,
+      (secondLine) => {
+        const headersArray = secondLine.split(',');
+        const fixedHeadersArray = util.lineBreakfix(headersArray);
+        console.log(`${filename} => ${fixedHeadersArray}`);
+      },
+      (error) => {
+        console.log('error grabbing last line', error);
+      }
+    );
+  },
 };
 
 module.exports = {
