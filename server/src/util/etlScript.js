@@ -1,3 +1,5 @@
 const { util } = require('./commands.js');
 
-util.firstLine('../datasources/reviews.csv');
+const headers = util.firstLine('../datasources/reviews.csv');
+
+console.log(headers);

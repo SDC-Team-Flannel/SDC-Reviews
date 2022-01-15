@@ -23,17 +23,15 @@ app.post('/reviews', (req, res) => {
 });
 
 // TODO: turn url into req.review_id
-app.put('/reviews//helpful', (req, res) => {
-  console.log(req.query);
-  route.markHelpful(req.query);
-  res.send('received post for helpful');
-});
-
-// TODO: turn url into req.review_id
-app.put('/report', (req, res) => {
-  console.log(req.query);
-  route.reviewsPost(req.query);
-  res.send('received post for reviews');
+app.put('/reviews', (req, res) => {
+  var query = req.query.review_id.split('/');
+  if (query[1] === 'helpful') {
+    route.markHelpful(req.query);
+    res.send('received post for helpful');
+  } else {
+    route.reportReview(req.query);
+    res.send('received post for report');
+  }
 });
 
 app.listen(port, () => {

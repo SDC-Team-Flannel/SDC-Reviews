@@ -40,7 +40,7 @@ const util = {
       (firstLine) => {
         const headersArray = firstLine.split(',');
         const fixedHeadersArray = util.lineBreakfix(headersArray);
-        console.log(`${filename} => ${fixedHeadersArray}`);
+        return fixedHeadersArray;
       },
       (error) => {
         console.log('error grabbing first line', error);
