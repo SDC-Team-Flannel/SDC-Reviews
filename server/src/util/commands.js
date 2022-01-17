@@ -71,12 +71,18 @@ const util = {
 // };
 
 const script = (fileName) => {
+  // create connection to staging database
+  client.connect();
+
+  // total lines in csv file name
+  var fileLineCount;
   // find number of lines total (with wc command)
   // TODO: change hardcode into fileName variable
   const lineCount = util.executeCommand(
     'wc -l ../datasources/reviews.csv',
     (lineCount) => {
-      console.log(lineCount);
+      console.log('this is line count', lineCount);
+      fileLineCount = lineCount;
     },
     (err) => {
       console.log(err);
@@ -84,9 +90,46 @@ const script = (fileName) => {
   );
 
   // read first line of file
-  const first = util.firstLine();
+  const storeFirstLine = (fileName) => {
+    var first;
+    util.firstLine('../datasources/reviews.csv', (array) => {
+      first = array.join(' ');
+
+      console.log('this is first line array', first);
+
+      client.query(
+        `INSERT INTO reviews_csv (info) VALUES ($1)`,
+        [first],
+        (err, res) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('this is query result', res);
+          }
+          client.end();
+        }
+      );
+    });
+  };
+
+  storeFirstLine();
 
   // store line into staging
+  // const line = grabFirstLine();
+
+  // add line to staging database
+  // client.query(
+  //   `INSERT INTO reviews_csv (info) VALUES ($1)`,
+  //   [line],
+  //   (err, res) => {
+  //     if (err) {
+  //       console.log(err);
+  //     } else {
+  //       console.log('this is query result', res);
+  //     }
+  //     client.end();
+  //   }
+  // );
 
   // while file line id in staging !== wc total
   // read first line
