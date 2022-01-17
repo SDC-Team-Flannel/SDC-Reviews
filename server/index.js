@@ -5,7 +5,7 @@ const { route } = require('./src/routes/routes.js');
 const port = 3000;
 
 app.get('/reviews/', (req, res) => {
-  console.log(req.query);
+  console.log('this is in server', req.query);
   route.reviewsGet(req.query);
   res.send('received get for reviews');
 });

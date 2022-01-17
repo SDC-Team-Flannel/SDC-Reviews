@@ -1,4 +1,5 @@
 const { exec } = require('child_process');
+const { pool, client } = require('../middleware/postgresAPI.js');
 
 // execute an input command into the terminal (successCB and errorCB is optional)
 const util = {
@@ -34,13 +35,14 @@ const util = {
   },
 
   // grabs first line (headers from CSV files)
-  firstLine: (filename) => {
+  firstLine: (filename, next) => {
     util.executeCommand(
       `head -n1 ${filename}`,
       (firstLine) => {
         const headersArray = firstLine.split(',');
         const fixedHeadersArray = util.lineBreakfix(headersArray);
-        return fixedHeadersArray;
+        console.log(fixedHeadersArray);
+        next(fixedHeadersArray);
       },
       (error) => {
         console.log('error grabbing first line', error);
@@ -64,6 +66,41 @@ const util = {
   },
 };
 
-module.exports = {
-  util,
+// module.exports = {
+//   util,
+// };
+
+const script = (fileName) => {
+  // find number of lines total (with wc command)
+  // TODO: change hardcode into fileName variable
+  const lineCount = util.executeCommand(
+    'wc -l ../datasources/reviews.csv',
+    (lineCount) => {
+      console.log(lineCount);
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+
+  // read first line of file
+  const first = util.firstLine();
+
+  // store line into staging
+
+  // while file line id in staging !== wc total
+  // read first line
+  // save line to staging
+  // delete first line
+  // break into readable array
+  // fill into formatted database
+
+  // check staged database for last id
+  // check formatted database for last id
+  // if ids match
+  // success in ETL
+  // else
+  // handle missing data
 };
+
+script();

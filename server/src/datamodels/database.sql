@@ -1,19 +1,27 @@
+CREATE DATABASE sdc_staging;
+
+CREATE TABLE reviews_csv(
+  id INT GENERATED ALWAYS AS IDENTITY,
+  info TEXT NOT NULL,
+  PRIMARY KEY(id)
+);
+
 CREATE DATABASE sdc_database;
 
-CREATE TABLE reviews(
-  id SERIAL PRIMARY KEY,
-  product_id INTEGER,
-  rating SMALLINT,
-  date DATE,
-  summary VARCHAR(50),
-  body VARCHAR(255),
-  recommend BOOLEAN,
-  reported BOOLEAN,
-  reviewer_name VARCHAR(50),
-  reviewer_email VARCHAR(50),
-  reponse VARCHAR(255),
-  helpfullness SMALLINT
-);
+-- CREATE TABLE reviews(
+--   id SERIAL PRIMARY KEY,
+--   product_id INTEGER,
+--   rating SMALLINT,
+--   date DATE,
+--   summary VARCHAR(50),
+--   body VARCHAR(255),
+--   recommend BOOLEAN,
+--   reported BOOLEAN,
+--   reviewer_name VARCHAR(50),
+--   reviewer_email VARCHAR(50),
+--   reponse VARCHAR(255),
+--   helpfullness SMALLINT
+-- );
 
 
 
