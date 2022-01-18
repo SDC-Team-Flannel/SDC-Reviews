@@ -4,16 +4,23 @@ app.use(express.json());
 const { route } = require('./src/routes/routes.js');
 const port = 3000;
 
-app.get('/reviews/', (req, res) => {
-  console.log('this is in server', req.query);
-  route.reviewsGet(req.query);
-  res.send('received get for reviews');
+const { example } = require('./src/middleware/postgresAPI.js');
+
+app.get('/reviews/', async (req, res) => {
+  console.log('server received: ', req.query);
+  var results = await route.reviewsGet(req.query);
+  res.json(results.rows);
 });
 
-app.get('/reviews/meta', (req, res) => {
-  console.log(req.query);
-  route.reviewsMetaGet(req.query);
-  res.send('received get for metaData');
+app.get('/reviews/meta', async (req, res) => {
+  console.log('server received: ', req.query);
+  try {
+    const reviewMetaData = await route.reviewsMetaGet(req.query);
+    console.log('server sent back: ', reviewMetaData);
+    res.json(reviewMetaData);
+  } catch (err) {
+    console.error(err.message);
+  }
 });
 
 app.post('/reviews', (req, res) => {

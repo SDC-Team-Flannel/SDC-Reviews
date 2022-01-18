@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 const { Client } = require('pg');
 
-const pool = new Pool({
+const sdc_db = new Pool({
   user: 'postgres',
   password: 'password',
   database: 'sdc_database',
@@ -9,7 +9,7 @@ const pool = new Pool({
   port: 5432,
 });
 
-const client = new Client({
+const example = new Pool({
   host: 'localhost',
   user: 'postgres',
   password: 'password',
@@ -18,6 +18,6 @@ const client = new Client({
 });
 
 module.exports = {
-  pool,
-  client,
+  sdc_db,
+  example,
 };

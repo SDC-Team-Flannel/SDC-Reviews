@@ -1,11 +1,17 @@
-const { pool } = require('../middleware/postgresAPI.js');
+const { sdc_db, example } = require('../middleware/postgresAPI.js');
 
 const route = {
   // route to query all non reported reviews
-  reviewsGet: (req) => {
-    console.log('this is pool', pool);
-    console.log('this is in routes: get', req);
+  reviewsGet: async (req) => {
+    // TODO: params will have product_id, count (amount per page), page (first 100?), sort
+    // query should handle differnet params
+    const { count } = req;
+    const queryStr = 'SELECT * FROM reviews_csv ORDER BY id LIMIT ($1)';
+    const exampleInput = await example.query(queryStr, [count]);
+    console.log('exampleInput: ', exampleInput);
+    return exampleInput;
   },
+
   // route to query review metadata based on provided product_id
   reviewsMetaGet: (req) => {
     console.log('this is in routes: Metadata', req);
