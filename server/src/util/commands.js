@@ -41,7 +41,7 @@ const util = {
       (firstLine) => {
         const headersArray = firstLine.split(',');
         const fixedHeadersArray = util.lineBreakfix(headersArray);
-        console.log(fixedHeadersArray);
+        console.log('this is the firstLine', fixedHeadersArray);
         next(fixedHeadersArray);
       },
       (error) => {
@@ -51,13 +51,14 @@ const util = {
   },
 
   // grabs last line of CSV file
-  lastLine: (filename) => {
+  lastLine: (filename, next) => {
     util.executeCommand(
       `tail -n1 ${filename}`,
       (secondLine) => {
         const headersArray = secondLine.split(',');
         const fixedHeadersArray = util.lineBreakfix(headersArray);
-        console.log(`${filename} => ${fixedHeadersArray}`);
+        console.log('this is the last line', fixedHeadersArray);
+        next(fixedHeadersArray);
       },
       (error) => {
         console.log('error grabbing last line', error);
@@ -75,44 +76,91 @@ const script = (fileName) => {
   client.connect();
 
   // total lines in csv file name
-  var fileLineCount;
+  const valueReturn = async (func, value) => {
+    var result = await func(value);
+    return result;
+  };
   // find number of lines total (with wc command)
   // TODO: change hardcode into fileName variable
-  const lineCount = util.executeCommand(
-    'wc -l ../datasources/reviews.csv',
-    (lineCount) => {
-      console.log('this is line count', lineCount);
-      fileLineCount = lineCount;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
+  const lineCount = (fileName, callback) => {
+    util.executeCommand(
+      `wc -l ${fileName}`,
+      (lineCount) => {
+        console.log('this is line count', lineCount);
+        callback(lineCount);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  };
 
   // read first line of file
   const storeFirstLine = (fileName) => {
     var first;
-    util.firstLine('../datasources/reviews.csv', (array) => {
+    util.firstLine(`${fileName}`, (array) => {
       first = array.join(' ');
-
       console.log('this is first line array', first);
-
-      client.query(
-        `INSERT INTO reviews_csv (info) VALUES ($1)`,
-        [first],
-        (err, res) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('this is query result', res);
-          }
-          client.end();
+      client.query(`SELECT * FROM reviews_csv`, [], (err, res) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('this is query result', res);
         }
-      );
+      });
     });
   };
 
-  storeFirstLine();
+  const deleteFirstLine = (fileName) => {
+    util.executeCommand(
+      `sed '1d' ${fileName}`,
+      (success) => {
+        console.log('success in delete firstLine', success);
+      },
+      (error) => {
+        console.log('error in delete firstLine', error);
+      }
+    );
+  };
+
+  const startETL = async (fileName) => {
+    var first;
+    var last;
+    const assignFirst = async () => {
+      await util.firstLine(fileName, (results) => {
+        console.log('first assigned to', results);
+        first = results;
+      });
+    };
+    const assignLast = async () => {
+      await util.lastLine(fileName, (results) => {
+        console.log('last assigned to', results);
+        last = results;
+      });
+    };
+    assignFirst();
+    assignLast();
+
+    console.log('this is outside the while loop', first, last);
+
+    while (first !== last) {
+      console.log('this is inside the while loop', first, last);
+
+      await util.firstLine(fileName, (results) => {
+        console.log('this file was read', results);
+      });
+
+      console.log('Line was stored');
+
+      await deleteFirstLine(fileName);
+
+      console.log('Line was cleaned');
+    }
+  };
+
+  startETL('../datasources/example.csv');
+
+  client.end();
 
   // store line into staging
   // const line = grabFirstLine();

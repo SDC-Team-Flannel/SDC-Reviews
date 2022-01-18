@@ -8,59 +8,59 @@ CREATE TABLE reviews_csv(
 
 CREATE DATABASE sdc_database;
 
--- CREATE TABLE reviews(
---   id SERIAL PRIMARY KEY,
---   product_id INTEGER,
---   rating SMALLINT,
---   date DATE,
---   summary VARCHAR(50),
---   body VARCHAR(255),
---   recommend BOOLEAN,
---   reported BOOLEAN,
---   reviewer_name VARCHAR(50),
---   reviewer_email VARCHAR(50),
---   reponse VARCHAR(255),
---   helpfullness SMALLINT
--- );
+CREATE TABLE IF NOT EXISTS public.reviews
+(
+    id serial,
+    product_id integer,
+    rating smallint,
+    date date,
+    summary character varying(128),
+    body text,
+    recommend boolean,
+    reported boolean,
+    reviewer_name character varying(128),
+    reviewer_email character varying(128),
+    response text,
+    helpfulness smallint,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.characteristics
+(
+    id serial,
+    product_id integer,
+    name character varying(128),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.characteristics_reviews
+(
+    id serial,
+    characteristic_id integer,
+    review_id integer,
+    value smallint,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.reviews_photos
+(
+    id serial,
+    review_id integer,
+    url character varying(128),
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE IF EXISTS public.characteristics_reviews
+    ADD CONSTRAINT review_id FOREIGN KEY (review_id)
+    REFERENCES public.reviews (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
-
--- const schemas = {
---   reviewsSchema: {
---     id: Number,
---     product_id: Number,
---     rating: Number,
---     date: String,
---     summary: String,
---     body: String,
---     recommend: Boolean,
---     reported: Boolean,
---     reviewer_name: String,
---     reviewer_email: String,
---     response: Boolean,
---     helpfullness: Number,
---   },
-
---   charReviewsSchema: {
---     id: Number,
---     charateristic_id: Number,
---     review_id: Number,
---     value: Number,
---   },
-
---   characteristicsSchema: {
---     id: Number,
---     product_id: Number,
---     name: String,
---   },
-
---   reviewsPhotosSchema: {
---     id: Number,
---     review_id: Number,
---     url: String,
---   };
--- }
-
--- module.exports{
---   schemas,
--- }
+ALTER TABLE IF EXISTS public.reviews_photos
+    ADD CONSTRAINT review_id FOREIGN KEY (review_id)
+    REFERENCES public.reviews (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
