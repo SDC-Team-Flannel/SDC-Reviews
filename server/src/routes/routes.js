@@ -45,6 +45,18 @@ const route = {
   // route to add review to reviews data
   reviewsPost: (req) => {
     console.log('this is in routes: Add', req);
+    const {
+      product_id,
+      rating,
+      summary,
+      body,
+      recommend,
+      name,
+      email,
+      photos,
+      characteristics,
+    } = req;
+    const queryStr = 'INSERT INTO reviews ';
   },
 
   // route to update review as helpful
