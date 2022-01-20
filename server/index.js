@@ -27,10 +27,12 @@ app.get('/reviews/meta', async (req, res) => {
   }
 });
 
-app.post('/reviews', (req, res) => {
+app.post('/reviews', async (req, res) => {
   console.log(req.body);
-  route.reviewsPost(req.body);
-  res.send('received post for reviews');
+  var time = new Date();
+  console.log(time.toISOString().slice(0, 10));
+  const added = await route.reviewsPost(req.body);
+  res.status(201).send(`Review id: ${added} added`);
 });
 
 // TODO: turn url into req.review_id
