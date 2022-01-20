@@ -9,7 +9,7 @@ const { example } = require('./src/middleware/postgresAPI.js');
 app.get('/reviews/', async (req, res) => {
   console.log('server received: ', req.query);
   var results = await route.reviewsGet(req.query);
-  res.json(results.rows);
+  res.json(results);
 });
 
 app.get('/reviews/meta', async (req, res) => {
