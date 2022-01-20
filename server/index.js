@@ -7,8 +7,12 @@ const port = 3000;
 const { example } = require('./src/middleware/postgresAPI.js');
 
 app.get('/reviews/', async (req, res) => {
+  var start = Date.now();
   console.log('server received: ', req.query);
   var results = await route.reviewsGet(req.query);
+  var end = Date.now() - start;
+  const time = Math.floor(end / 1000);
+  console.log('total time of request: ', `${time} seconds`);
   res.json(results);
 });
 
