@@ -44,8 +44,6 @@ const route = {
 
   // route to add review to reviews data
   reviewsPost: async (req) => {
-    console.log('this is in routes: Add', req);
-
     // input for photos
     const photoUpdate = async (array) => {
       array.forEach(async (photo) => {
@@ -106,8 +104,6 @@ const route = {
       0,
     ]);
 
-    console.log('this is post', post.rows[0].review_id);
-
     // new review_id added
     const newId = post.rows[0].review_id;
 
@@ -122,13 +118,31 @@ const route = {
   },
 
   // route to update review as helpful
-  markHelpful: (req) => {
-    console.log('this is in routes: helpful', req);
+  markHelpful: async (req) => {
+    try {
+      const { review_id } = req;
+      const queryStr =
+        'UPDATE reviews SET helpfulness = helpfulness + 1 WHERE review_id = $1 RETURNING review_id';
+      const update = await sdc_db.query(queryStr, [review_id]);
+      return update.rows[0];
+    } catch (err) {
+      console.log(err.message);
+      return false;
+    }
   },
 
   // route to update review as reported (makes it no longer available in reviews get)
-  reportReview: (req) => {
-    console.log('this is in routes: report', req);
+  reportReview: async (req) => {
+    try {
+      const { review_id } = req;
+      const queryStr =
+        'UPDATE reviews SET reported = true WHERE review_id = $1 RETURNING review_id';
+      const report = await sdc_db.query(queryStr, [review_id]);
+      return report.rows[0];
+    } catch (err) {
+      console.log(err.message);
+      return false;
+    }
   },
 };
 

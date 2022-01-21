@@ -29,22 +29,24 @@ app.get('/reviews/meta', async (req, res) => {
 
 app.post('/reviews', async (req, res) => {
   console.log(req.body);
-  var time = new Date();
-  console.log(time.toISOString().slice(0, 10));
   const added = await route.reviewsPost(req.body);
   res.status(201).send(`Review id: ${added} added`);
 });
 
-// TODO: turn url into req.review_id
-app.put('/reviews', (req, res) => {
-  var query = req.query.review_id.split('/');
-  if (query[1] === 'helpful') {
-    route.markHelpful(req.query);
-    res.send('received post for helpful');
-  } else {
-    route.reportReview(req.query);
-    res.send('received post for report');
+app.put('/reviews/:review_id/helpful', async (req, res) => {
+  const update = await route.markHelpful(req.params);
+  if (!update) {
+    res.status(400);
   }
+  res.status(204);
+});
+
+app.put('/reviews/:review_id/report', async (req, res) => {
+  const report = await route.reportReview(req.params);
+  if (!report) {
+    res.status(400);
+  }
+  res.status(204);
 });
 
 app.listen(port, () => {
