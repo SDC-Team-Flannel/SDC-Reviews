@@ -56,6 +56,12 @@ const route = {
       });
     };
 
+    // input for characteristic reviews
+    const characteristicUpdate = async (characteristicsObj) => {
+      for (const property in characteristicsObj) {
+      }
+    };
+
     //Creating Date for database storage
     var date = new Date();
     let inputDate = date.toISOString().slice(0, 10);
