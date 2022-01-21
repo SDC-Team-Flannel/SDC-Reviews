@@ -58,7 +58,15 @@ const route = {
 
     // input for characteristic reviews
     const characteristicUpdate = async (characteristicsObj) => {
-      for (const property in characteristicsObj) {
+      const addCharReview = async (key) => {
+        await sdc_db.query(
+          'INSERT INTO characteristics_reviews (characteristic_id, review_id, value) VALUES ($1, $2, $3)',
+          [property, newId, characteristicsObj[property]]
+        );
+      };
+
+      for (var property in characteristicsObj) {
+        addCharReview(property);
       }
     };
 
@@ -107,6 +115,8 @@ const route = {
     if (photos.length > 0) {
       photoUpdate(photos);
     }
+    // update characteristics reviews
+    characteristicUpdate(characteristics);
 
     return newId;
   },
