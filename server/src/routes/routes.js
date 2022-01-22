@@ -15,24 +15,35 @@ const route = {
     //   'SELECT reviews.review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, reviews_photos.id, reviews_photos.url FROM reviews LEFT JOIN reviews_photos ON reviews.review_id = reviews_photos.review_id WHERE reviews.review_id = ($1) ORDER BY ($2) LIMIT ($3)';
 
     // ATTEMPT TO MAKE TWO QUERIES IN ONE REQUEST: ASYNC PROBLEM
-    // const queryStr =
-    //   'SELECT * FROM reviews WHERE product_id = ($1) ORDER BY ($2) LIMIT ($3)';
+    const reviewQueryStr =
+      'SELECT review_id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness FROM reviews WHERE product_id = ($1) ORDER BY ($2) LIMIT ($3)';
+    const photosQueryStr =
+      'SELECT id, url FROM reviews_photos WHERE review_id = ($1)';
 
     // OBJECT CREATE
-    const queryStr = `SELECT r.review_id, r.rating, r.summary, r.recommend, r.response, r.body, r.date, r.reviewer_name, r.helpfulness, CASE WHEN count(p) = 0 THEN ARRAY[]::json[] ELSE array_agg(p.photo) END AS photos FROM reviews r LEFT OUTER JOIN ( SELECT p1.review_id, json_build_object('id', p1.id, 'url', p1.url) as photo from reviews_photos p1 Order by p1.id) p on r.review_id = p.review_id where r.product_id = ($1) group by r.review_id order by ($2) limit ($3)`;
+    // const queryStr = `SELECT r.review_id, r.rating, r.summary, r.recommend, r.response, r.body, r.date, r.reviewer_name, r.helpfulness, CASE WHEN count(p) = 0 THEN ARRAY[]::json[] ELSE array_agg(p.photo) END AS photos FROM reviews r LEFT OUTER JOIN ( SELECT p1.review_id, json_build_object('id', p1.id, 'url', p1.url) as photo from reviews_photos p1 Order by p1.id) p on r.review_id = p.review_id where r.product_id = ($1) group by r.review_id order by ($2) limit ($3)`;
+    const results = {
+      product: product_id,
+      page: page,
+      count: count,
+      results: [],
+    };
 
-    const queryResults = await sdc_db.query(queryStr, [
+    const queryResults = await sdc_db.query(reviewQueryStr, [
       product_id,
       sort,
       count,
     ]);
 
-    const results = {
-      product: product_id,
-      page: page,
-      count: count,
-      results: queryResults.rows,
-    };
+    for (let i = 0; i < queryResults.rows.length; i++) {
+      let resultObj = queryResults.rows[i];
+      let photosResults = await sdc_db.query(photosQueryStr, [
+        resultObj.review_id,
+      ]);
+      resultObj.photos = photosResults.rows;
+    }
+
+    results.results = queryResults.rows;
     console.log('Returned to Client: ', results);
     return results;
   },
