@@ -39,7 +39,6 @@ const route = {
 
   // route to query review metadata based on provided product_id
   reviewsMetaGet: async (req) => {
-    console.log('this is in routes: Metadata', req);
     const { product_id } = req;
     const queryStr =
       'SELECT r.rating, r.recommend, c.* FROM reviews r LEFT JOIN characteristics_reviews c ON r.review_id = c.review_id WHERE r.product_id = $1';
@@ -48,32 +47,42 @@ const route = {
       'SELECT id, name FROM characteristics WHERE product_id = $1',
       [product_id]
     );
-    console.log('this is results from metaData', metaData.rows);
-    console.log('this is characteristic Id info', characteristicsId.rows);
-    const metaDataObject = { product_id: product_id };
+    var metaDataObject = { product_id: product_id };
     var ratings = {};
     var recommend = { 0: 0, 1: 0 };
     var characteristics = {};
     var characteristicsCounter = {};
 
     characteristicsId.rows.forEach((char) => {
-      characteristics[char[name]] = { id: char[id], value: 0 };
-      characteristicsCounter[char[id]] = 0;
+      characteristics[char.name] = { id: char.id, value: 0 };
+      characteristicsCounter[char.id] = [char.name, 0, 0];
     });
 
     metaData.rows.forEach((review) => {
-      if (ratings[review.ratings] === undefined) {
-        ratings[review.ratings] = 1;
+      if (ratings[review.rating] === undefined) {
+        ratings[review.rating] = 1;
       } else {
-        ratings[review.ratings]++;
+        ratings[review.rating]++;
       }
 
       if (review.recommend) {
-        characteristics[0]++;
+        recommend[0]++;
       } else {
-        characteristics[1]++;
+        recommend[1]++;
       }
+
+      characteristicsCounter[review.characteristic_id][1]++;
+      characteristicsCounter[review.characteristic_id][2] =
+        characteristicsCounter[review.characteristic_id][2] + review.rating;
+      let charName = characteristicsCounter[review.characteristic_id][0];
+      characteristics[charName].value =
+        characteristicsCounter[review.characteristic_id][2] /
+        characteristicsCounter[review.characteristic_id][1];
     });
+    metaDataObject.ratings = ratings;
+    metaDataObject.recommend = recommend;
+    metaDataObject.characteristics = characteristics;
+    return metaDataObject;
   },
 
   // route to add review to reviews data
